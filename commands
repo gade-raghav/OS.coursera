@@ -1,0 +1,86 @@
+Basic Commands
+
+ls   - list directories
+pwd  - present working directory
+cd   - change directory
+mkdir- make directory
+        to make dir with spaces " mkdir my\ folder\ haha " or " mkdir 'my folder haha'
+history - to list all the commands used
+clear - to clear screen
+cp   - to copy files from one dir to another
+        example " cp demo ~/Desktop"
+       to copy files having same extensions
+        example " cp *.c ~/Desktop"
+       to copy a directory to another directory
+        example " cp -r demo ~/Desktop"
+mv   - to rename a document
+        example " mv red.doc blue.doc"
+     - to move a document
+rm   - to remove a file
+     - to remove a folder
+        example " rm -r demo" 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+File and Text Manipulation
+
+cat - to view a file
+less- to view files, search for a word etc (similar commands used as in vim editor).
+head- to view first ten lines of a file.
+tail- to view last ten lines of a file.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Searching within files 
+
+grep : We can search for words within the files that match a certain pattern using this.
+       example " grep 'word' 'file name' "
+               " grep 'word' *.c(or any other extension) :
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Input Output and Pipeline
+
+How this works?
+Every command takes input and can produce output. To do this we use I/O streams.There are three streams :
+0:stdin (0 is the standard number indicating std input)
+1:stdout (1 is the standard number for std out)
+2:stderr (2 is the standard number for std in)
+We give input to a process by adding things to stdin stream, which flows in the process creates output,adds data to stdout stram,which flows out of the process.
+
+
+
+echo - it's an alias for write-output
+> - standard output redirector operator
+     this helps to redirect output . We can alter it by adding a text file name or anything else.
+< - This is standard input redirector, used to get input 
+  example : cat < file.txt
+>> - The difference between > and >> is that this appends the output to the file name mentioned instead of overwriting.
+  example : the following command removes a protected file by redirecting the standard errors to another output.
+            rm securefile.txt 2> errors.txt 
+  example : the following command uses pipe to take std output and find few words to put into another file.
+            cat words.txt | grep st > st_words.txt 
+              
+
+Let us suppose we don't want the error messages to be stored in any files, we can redirect them to a special place called /dev/null . This is known as the black hole   which actually is the defention of nothing. 
+
+| - This command is used to take output of one command as input of another command.
+  example : Let's suppose we want to search for bluetooth word present in sub directories of /etc.
+            ls -al /etc | grep bluetooth 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~                                                                                                                                                                       
+~                                
