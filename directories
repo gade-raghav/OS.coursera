@@ -1,7 +1,7 @@
 The main directory is called root directory and is represented by '/'.
 Under these directories we have many directories, some of which are listed below along with the files they store.
 /bin  : Stores essential binaries or programs, ls command that we used is stored in this folder. Basically stores program files.
-/etc  : Stores some important system configuration filesl.
+/etc  : Stores some important system configuration files.
 /home : Personal dir of user, stores pictures,documents,and etc of users.
 /proc : This dir contains information about currently running processes.
 /usr  : It's meant for storing user installed software.

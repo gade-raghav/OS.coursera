@@ -42,7 +42,7 @@ How this works?
 Every command takes input and can produce output. To do this we use I/O streams.There are three streams :
 0:stdin (0 is the standard number indicating std input)
 1:stdout (1 is the standard number for std out)
-2:stderr (2 is the standard number for std in)
+2:stderr (2 is the standard number for std error)
 We give input to a process by adding things to stdin stream, which flows in the process creates output,adds data to stdout stram,which flows out of the process.
 
 
@@ -65,6 +65,98 @@ Let us suppose we don't want the error messages to be stored in any files, we ca
   example : Let's suppose we want to search for bluetooth word present in sub directories of /etc.
             ls -al /etc | grep bluetooth 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+User 
+
+sudo - To run commands as root. (super user do - sudo)
+su   - To change user. (substitute user - su)
+
+You can view who has access to run sudo by viewing the /etc/group file.(how to read this file sudo:X:123:raghav . Here sudo is command , X means that the  password is  encrypted and stored in separate file , 123 is the group id (OS uses gid instead of group name), , last field is the list of users i.e raghav)
+
+You can view the users on our machine by opening the file named /etc/password.
+This file consists of lot more users , most of which are not humans but different processes that are required to be running for user.
+file has the following details
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologini
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+Let's analyse the output.1st line , root is the user , X means the passwd is encrypted and stored in separate file, 0:0 is the user id
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Password 
+
+passwd - To change password run this command.
+
+When you set a password it is securely scrambled and stored in /etc/shadow file which can be only read by root.
+If you want to force a user to change password you can use -e i.e expire flag with passwd. This expires a user password and will ask them to set a new one next time    they login.
+example : sudo passwd -e username 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Adding and Removing users
+
+useradd - To add user. This will set up basic configurations for the user, and set up a home directory.
+userdel - To remove a user.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Permissions 
+
+Three different types of permissions in linux.
+read   - allows reading contents of a file/folder
+write  - allows writing information on a file/folder
+execute- allows execution of a program
+
+ls cmnd with -l flag gives this info (the following is the output for better understanding)
+-rw-rw-r--. 1 raghavgades raghavgades 5462 Dec 20 11:31 commands
+-rw-rw-r--. 1 raghavgades raghavgades  648 Dec 19 13:19 directories
+There are 10 bits here.First - indicated that it's a normal file (d indicated directory).Next nine bits are out permissions r-readable w-writable x-executable.grouped 
+in sets of three ,first trio refers to permissions of owner then the groups and then all other users present. '-' indicates that the permission is disabled.
+
+Modifying permissions
+
+chmod- to change permissions (change mode -chmod)
+       u - for owner
+       g - for groups
+       o - for others
+    example - '+ or -' can be used to give or remove particular permissions.  
+              chmod u+x 'file name' 
+              this command gives executable rights of the file to owner.    
+              chmod u-x 'file name'
+              removes rights
+              multiple permissions can also be given chmod ugo+rwx 'file name'
+
+The above mentioned method is symbolic method to change permissions , there is another method which is much faster and efficient to change permissions.
+numerical equivalent
+4 for read or r
+2 for write or w
+1 for execute or x
+ 
+   example - chmod 756 'file name' 
+
+In the above example the first digit is for owner followed by groups and other respectively. So where did 7, 5 and 6 come from . It's nothing but the sum of the above 
+mentioned digits which gives those permissions i.e "7 = 4+2+1 means rwx "
+
+chown- to change owner of a file
+     example - sudo chown 'new owner' 'file name'
+
+chgrp- to change group of a file
+     example - sudo chgrp 'new group' 'file name'
+
+SetUid,SetGid,Sticky Bit
+
+What if we want a user to do something that requires root privilages but doesn't want to give root privilages to him.There are certain commands for that purpose.
+example - after we change password , it gets encrypted and saved in shadow file.This shadow file is owned by root, so how are we able to write into this file if it's owned by root. Thanks to setuid, we can enable files to be run by the permissions of the owner of the file.
+You can set it symbolically like this chmod u+s 'file name'
+otherwise you can ser it numerically lik this chmod 4755 'file name' where 4 is the number to setuid prepended to rest of the permissions.
+Similar to that, you can run a file using group permission with setgid. prepend 2 to the rest of the permission or set symbolically.
+
+Stickybit: This bit sticks a file or folder down and makes it so that anyone can write to it but cannot delete anything form it except for the owner or the root.
+   example -  list info of dir /tmp . we get the following.
+             drwxrwxrwt. 20 root root 4096 Dec 20 13:20 /tmp/ 
+             The 't' bit means that it's a sticky bit enabled directory. No one can delete this except the root. Numerical format to enable it is 1 and 't' is the 
+             symbolic format to enable this.
 
 
 
@@ -78,9 +170,4 @@ Let us suppose we don't want the error messages to be stored in any files, we ca
 
 
 
-
-
-
-
-~                                                                                                                                                                       
-~                                
+                                
