@@ -167,15 +167,32 @@ Insead of rpm , yum is used because it also downloads and install package depend
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
- 
+Filesystem
 
+A filesystem is used to keep track files and file storage on a disk. We use ext4 filesystem in linux(there are many others).Disk can be partitioned for multiple uses.
+You can run two different os's on same computer because of partiotioning. You can then use two different filesystems on the disk.
+When you format a filesystem, it becomes a volume.Volume and partitions are used synonymously but are two different things.
+A partition table tells the OS how the disk is partitioned. The table will tell you which partitions you can boot from and howw mush space is allocated to partition .There are two main partition schemes used,MBR(master boot record) and GPT(GUID partition table). These schemes dexide how to structure the information on partitions.
+MBR - It is a traditional partition table , and mostly used in windows os. It only lets you have volume sizes of 2TB or less It also uses something called primary partitions.(you can have ony 4 primary partitions. This is an old standard and.
+GPT - You can have volumes greater than 2TB and it ony has one type of partition.You can as many as you want in the disk. Latest BIOS standard called UEFI is used now.
+To use UEFI , your disk has to use GPT.
+Parted tool is a tool in linux that supports GPT and MBR.Parted can be used in two modes, interactvie and command line.
+parted -l  - This command with -l flag lists all the disks that are connected to the system and their partitioning.
+sudo parted /dev/"name of the disk" - This command helps to get into parted tool to partition disk name.
+print  - this command prints the partition of the disk (if any) .
+mklbl  - this command specifies which partition table you want to use.
+mkpart - this command is used to make partition . It requires following information, what type of partition we want to make,what filesystem we want to format and the 
+         start of the disk and end of the disk. Partition type is not required for gpt table so we mention primary, however we need to mention primary or logical etc 
+         while using mbr partition .
+         eg: mkpart primary ext4 1MiB 5GiB
+The following command is not used in the parted tool. You need to run it in the terminal.
+mkfs   - this command is used to format the partitioin with the filesystem.
+         eg: mkfs -t ext4 /dev/"name of the partition"
+CAUTION: Be very carefull while partitioning disk . A small mistake can lead to a big mess. 
 
+In the above mentioned text we've learned about how to partition disk and make a filesystem on it , however we are not ready to read and write files in it. There is one last step to get a usable disk in linux.
 
-
-
-
-
-
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 
 
 
