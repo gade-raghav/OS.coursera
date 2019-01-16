@@ -169,16 +169,19 @@ Insead of rpm , yum is used because it also downloads and install package depend
 
 Filesystem
 
+(In the following examples assume that we are using usb as the disk we are partitioning and  mounting)
+
+
 A filesystem is used to keep track files and file storage on a disk. We use ext4 filesystem in linux(there are many others).Disk can be partitioned for multiple uses.
 You can run two different os's on same computer because of partiotioning. You can then use two different filesystems on the disk.
 When you format a filesystem, it becomes a volume.Volume and partitions are used synonymously but are two different things.
 A partition table tells the OS how the disk is partitioned. The table will tell you which partitions you can boot from and howw mush space is allocated to partition .There are two main partition schemes used,MBR(master boot record) and GPT(GUID partition table). These schemes dexide how to structure the information on partitions.
-MBR - It is a traditional partition table , and mostly used in windows os. It only lets you have volume sizes of 2TB or less It also uses something called primary partitions.(you can have ony 4 primary partitions. This is an old standard and.
+MBR - It is a traditional partition table , and mostly used in windows os. It only lets you have volume sizes of 2TB or less It also uses something called primary partitions.(you can have ony 4 primary partitions.) This is an old standard and.
 GPT - You can have volumes greater than 2TB and it ony has one type of partition.You can as many as you want in the disk. Latest BIOS standard called UEFI is used now.
 To use UEFI , your disk has to use GPT.
 Parted tool is a tool in linux that supports GPT and MBR.Parted can be used in two modes, interactvie and command line.
 parted -l  - This command with -l flag lists all the disks that are connected to the system and their partitioning.
-sudo parted /dev/"name of the disk" - This command helps to get into parted tool to partition disk name.
+sudo parted /dev/usb - This command helps to get into parted tool to partition disk name.
 print  - this command prints the partition of the disk (if any) .
 mklbl  - this command specifies which partition table you want to use.
 mkpart - this command is used to make partition . It requires following information, what type of partition we want to make,what filesystem we want to format and the 
@@ -187,13 +190,51 @@ mkpart - this command is used to make partition . It requires following informat
          eg: mkpart primary ext4 1MiB 5GiB
 The following command is not used in the parted tool. You need to run it in the terminal.
 mkfs   - this command is used to format the partitioin with the filesystem.
-         eg: mkfs -t ext4 /dev/"name of the partition"
+         eg: mkfs -t ext4 /dev/usb
 CAUTION: Be very carefull while partitioning disk . A small mistake can lead to a big mess. 
 
 In the above mentioned text we've learned about how to partition disk and make a filesystem on it , however we are not ready to read and write files in it. There is one last step to get a usable disk in linux.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Mounting
+
+Mounting a filesystem or a disk means to make it accessible to the computer. If we want use USB drive, we mount the file system to a drive.(windows does this automatically.) You might be thinking why can't we cd into /dev/usb and start reading and writing files from it. If you try that , you get a error message saying that /dev/usb is not a directory. To resolve this, we need to create a directory on our computer and mount the filesystem of our usb to this directory.
+command : sudo mount /dev/usb /my_usb/
+Now if we go to /my_usb we can read and write files to the new filesystem.
+Most of the os' does not need mounting as they automatically does this for us when we plug in a device. One or the other way filesystem has to be mounted in order to interact with the os.We can similarly unmount the filesystem. 
+command : sudo unmount /dev/usb or sudo unmount /my_usb  ( both will work).When you shutdown your system , disks that were mounted manually are automatically unmounted.Always make sure to unmount before physically disconnecting a drive.In case of USB drive we can run into some interesting errors that are discussed later.
+Also keep in mind that when we shutdown computer , the mount point disappears. we can  permanently mount a disk to automatically load up when computer boots. we need to make changes in file called /etc/fstab.
+/etc/fstab consists a list of unique device id's with their mount points and a little more information. If we want to automatically mount a file , we can just add an
+entry their similar to what is listed.The first feild we need to add is the UUID( Universal Unique ID) of our usb drive.
+To get the UUID we can run a command called 
+blkid . This will show us the disks that are connected along with their uuid's.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Swap Space
+
+Virtual memory is how our OS provides the physical memory available in or computer(like RAM) to the applications that run on the computer.This makes life easier fo program which needs to access memory since it doesnt have to worry about what portions of memory other programs might be using.It also doesnt have to keep track of weather the data it is using is located in RAM or not.
+Basically you have the liberty to use more memory than what you have physically installed. To do this, it dedicates an area of hard disk to use as a storage base for blocks of data called pages.
+When a particular block of data isn't being used, it gets evicted(copied to the hard drive).This is because accessing data on RAM is faster .Therefore, the OS keeps most accessed blocks of data on RAM and other on the hard drive which can be retrieved.But it has to read from hard drive which is relatively slow. Every OS has it's way of maintaing this kind of memory management scheme, So how does ir work on Linux?
+In linux , this particular area dedicated to hard drive used for virtual memory is known as swap space.
+How to make swap space? 
+Use parted tool on a drive you want eg. /dev/myusb
+         sudo parted /dev/myusb 
+Make linux swap partition in the following way 
+         mkpart primary linux-swap 5Gib 100% (100% implies to use the remaining space as swap)
+Now lets quit out of parted tool.We need to specify to OS that the partition you made is a swap partition.We use a mkswp command.
+         sudo mkswp /dev/myusb 
+Finally one more command needs to be run on the system to enable the swap space created.
+         sudo swapon /dev/myusb
+If we want to automatically mount swap space everytime system boots up, just add a swap entry to the /etc/fstab file.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 
 
 
-                                
+
+
+
+
+
