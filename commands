@@ -341,6 +341,25 @@ lsof: it lists open files and what processes are using them.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Log
+A log is like a computer diary, it records events that happen on your system.(shutting down of machine, booting up,when driver is loaded.
+The act of creating a log event is called as logging.In some systems there is a daemon which runs in background writing all the logs.You can customize any log field you want, but by default it logs all the essentials.
+
+Logs are stored in /var/log directory.Log files are helpful during troubleshooting when you have issues.
+reading a log output is simpled.It consists of time at which a particular work is done , 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
