@@ -229,7 +229,140 @@ Finally one more command needs to be run on the system to enable the swap space 
          sudo swapon /dev/myusb
 If we want to automatically mount swap space everytime system boots up, just add a swap entry to the /etc/fstab file.
 
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+Files
+
+In linux metadata and files are organised into a structure called inode. We store inode in an inode table which helps us manage the files on our file system.Inode stores everything but the data in the file and the filename.
+Shortcuts in linux are reffered to as softlinks or symlinks. They just point to another file. Softlinks allow us to link to another file using a file name.
+The other type of link found in linux are hardlinks .They link to an inode which is stored in an inode table in the filesystem.
+Essentially when we create a hardlink we are pointing to a physical location on the disk.If you deleted a file of hardlink, all the other hardlinks would still work.
+   when we type ls -al we get metdata of a file. The number field indicates the number of hardlinks a file has. When the hardlink count reaches zero , then the file is removed fom the computer.We might not be creating hardlinks or softlinks but its good to know about what happens through out your system.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Disk Usage
+
+To view disk utilization du -h command is used in linux. The du or disk usage commands shows us the disk usage of a specific directory.	The -h flags gives you the data in human readable form. You should use this command to view how much data space is used by files in a directory.
+Another command we can use to view the free space available in our machine us df command. The -h flag gives you the data in human readable form.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+File system repair 
+
+In previous lesson we discussed the dangers of removing an usb without unmounting it from the computer. When we copy files toa flash drive and we see that the file copied successfully, why can't we just unplug the pendrive? This is because the copying might not be finished.When we read or write something to a drive , We put it into a buffer. A data buffer is a region of RAM that is used to temporarily store data while it is being moved around. So when you copy something from OS to usb ,it first gets copied to a data buffer because RAM can transfer files faster than hard drives.So if you dont properly unmount the device than there is chance of data corruption.
+Data corruption can happen for lots of reasons, other than unsafely removing usb.Power cut or sudden shutdown of system can also cause data corruption.
+
+fsck is used to manually repair filesystem.
+eg: sudo fsck /dev/usb 
+If you run this command on a mounted partition it will damage the file system. It isn't always the guaranteed fix but can help in most cases.In some cases fsck runs manually when you boot up to check for any issues.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Process
+
+A running program is termed as a process. You can have lots of programs running for a same program.When we execute a program we launch a process.Program is stored on the disk and doesnot require any other resources. Process holds resources such as CPU ,I/O, memory etc. To calculate the information our software contains we need to give process resources such as CPU and RAM. Today's computers are powerful enough to handle browsing watch movies etc. But sometimes this isn't enough and the process uses more resources than it is supposed to. Sometimes processes are unresponsive and freeze out system making our entire computer unresponsive.
+How a process works?
+When you start an application such as a text editor, a process is launched with a specific process ID to which uniquely identify it from other processes. Our computer sees that the process needs hardware recourses to run.So kernel decides to give resources. Then instantly the editor opens up.This happens to every process that is launched. 
+Besides the visible processes there are processes which run in the background. These are reffered to as daemon processes.We wont see or interact with them but our system needs them to function.They include scheduling resources,logging,managing networks and more. 
+In linux process have parent child relationship. This means that every process you launch comes from another process which implies that there must be an initial process."init" is the first process which kernel creates with PID 1 when you start up your computer. Then this process starts up other processes which are required to get our computer up and running.
+When we're done with our processes they automatically get terminated.Once a process is terminated , it will release the resources it was using previously. We can also
+manually terminate a process.
+
+How to view the process information?
+We'll be using the ps command .The output is explained in the following lines.
+  PID TTY      STAT   TIME COMMAND
+15171 ?        Ss     0:00 /bin/sh /usr/bin/startkde
+15307 ?        S      0:00 dbus-launch --sh-syntax --exit-with-session
+15340 ?        Ssl    0:00 /usr/bin/dbus-daemon --fork --print-pid 5 --print-address 7 --session
+15611 ?        Sl     0:00 /usr/libexec/imsettings-daemon
+15717 ?        Ss     0:00 /usr/bin/ssh-agent /bin/sh -c exec -l /bin/bash -c "/usr/bin/startkde"
+15815 ?        S      0:00 /usr/libexec/kde4/start_kdeinit +kcminit_startup
+15816 ?        Ss     0:00 kdeinit4: kdeinit4 Running...
+15817 ?        S      0:00 kdeinit4: klauncher [kdeinit] --fd=9
+15819 ?        Sl     0:02 kdeinit4: kded4 [kdeinit]
+15821 ?        S      0:00 /usr/libexec/gam_server
+15825 ?        S      0:00 kdeinit4: kglobalaccel [kdeinit]
+15827 ?        S      0:00 /usr/libexec/bluetooth/obexd
+15840 ?        S      0:00 /usr/bin/bluedevil-monolithic
+
+The first coloumn is the PID or process id. TTY is the terminal associated with the process. STAT is the process status. If you see a R there , it implies that the process is running or waiting to run.T implies that that process has been terminated.S is for interruptible sleep, meaning the task is waiting for an event to complete before it resumes.TIME is for the total CPU time that the process has taken up.COMMAND shows the name of the command we are running. 
+
+ps -ef is command used to get all processe, even the ones run by other users.(e flag used for getting process run by other users. f flag used for getting full information) 
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 18:27 ?        00:00:02 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+root         2     0  0 18:27 ?        00:00:00 [kthreadd]
+root         3     2  0 18:27 ?        00:00:00 [ksoftirqd/0]
+root         5     2  0 18:27 ?        00:00:00 [kworker/0:0H]
+root         7     2  0 18:27 ?        00:00:00 [migration/0]
+root         8     2  0 18:27 ?        00:00:00 [rcu_bh]
+root         9     2  0 18:27 ?        00:00:09 [rcu_sched]
+root        10     2  0 18:27 ?        00:00:00 [lru-add-drain]
+root        11     2  0 18:27 ?        00:00:00 [watchdog/0]
+root        12     2  0 18:27 ?        00:00:00 [watchdog/1]
+root        13     2  0 18:27 ?        00:00:00 [migration/1]
+root        14     2  0 18:27 ?        00:00:00 [ksoftirqd/1]
+
+
+UID is the userid of the person running that process.
+PID is the process id .
+C is the number of child processes. 
+STIME is the start time of the process.
+TTY is the terminal associated with that process.
+TIME and CMD are sams as the previous ones.
+Now to search for a particular process we can use grep command with pipeline
+
+Thaere is anothe way to view processes . Linux has a directory named /proc which contains many subdirectories. We can get more information from here.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Linux signals
+
+In linux there are a lot of signals that we can send a process. These are labelled with names starting with sig. We can use a signal called sigint to interrupt a process and the default action of this signal is to terminate the process. 
+we can use Ctrl+C to send a signal. ctrl+c terminates a process. There are a lot of other signals which we can learn later.
+
+kill command: the kill command is used to terminate or kill a process.This will kill the process and give it sometime to clean up the resources it was using.If you don't give this time, file may be corrupted. eg : kill <PID> (this will kill the process.
+
+-KILL flag: The kill command along with KILL flag makes sure that the process is terminated without giving it time to cleanup.(file corruption may be caused if you use this process to kill a process.
+
+-TSTP flag: The kill command along with this file is used to suspend a process for sometime. ctrl+Z can also be done to acheive the same.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Resource Monitoring
+
+
+top : this command shows us the top processes which are using most resources on your machine.
+uptime: this command shows info about current time, how long your system's been running, number of users and load average.
+lsof: it lists open files and what processes are using them.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+ 	
+
+
+
+
+
+
+
+
+
+
 
 
 
